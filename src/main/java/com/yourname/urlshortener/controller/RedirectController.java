@@ -18,7 +18,7 @@ public class RedirectController {
         this.linkService = linkService;
     }
 
-    @GetMapping("/r/{code}")
+    @GetMapping("/{code}")
     public ResponseEntity<Void> redirect(@PathVariable String code) {
         String longUrl = linkService.getLongUrlOrThrow(code);
         linkService.incrementClicks(code);
