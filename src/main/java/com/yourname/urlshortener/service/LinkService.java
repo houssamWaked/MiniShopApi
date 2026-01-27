@@ -17,7 +17,6 @@ public class LinkService {
 
     private static final int MAX_RETRIES = 5;
     private static final Pattern CUSTOM_ALIAS_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{3,32}$");
-
     private final LinkRepository linkRepository;
     private final CodeGenerator codeGenerator;
 

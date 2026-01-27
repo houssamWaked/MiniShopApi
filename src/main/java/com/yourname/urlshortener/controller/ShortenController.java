@@ -3,8 +3,6 @@ package com.yourname.urlshortener.controller;
 import com.yourname.urlshortener.dto.ShortenRequest;
 import com.yourname.urlshortener.dto.ShortenResponse;
 import com.yourname.urlshortener.service.LinkService;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,18 +22,7 @@ public class ShortenController {
     @PostMapping(path = "/shorten", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ShortenResponse shorten(@RequestBody ShortenRequest request) {
         String code = linkService.shorten(request.getLongUrl(), request.getCustomAlias());
-
-        String brandedDomain = System.getenv("SHORT_DOMAIN_BRANDED");
-        String neutralDomain = System.getenv("SHORT_DOMAIN_NEUTRAL");
-        Map<String, String> shortUrls = null;
-
-        if (brandedDomain != null && !brandedDomain.isBlank()
-                && neutralDomain != null && !neutralDomain.isBlank()) {
-            shortUrls = new LinkedHashMap<>();
-            shortUrls.put("branded", brandedDomain.replaceAll("/+$", "") + "/r/" + code);
-            shortUrls.put("neutral", neutralDomain.replaceAll("/+$", "") + "/r/" + code);
-        }
-
-        return new ShortenResponse(code, shortUrls);
+        String shortUrl = "/r/" + code;
+        return new ShortenResponse(code, shortUrl);
     }
 }
