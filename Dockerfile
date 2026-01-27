@@ -1,5 +1,5 @@
 # -------- Build stage --------
-FROM gradle:8.10-jdk17 AS build
+FROM gradle:9.3-jdk17 AS build
 WORKDIR /app
 COPY . .
 RUN gradle clean bootJar -x test
