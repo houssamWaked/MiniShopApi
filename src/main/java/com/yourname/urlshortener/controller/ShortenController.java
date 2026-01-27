@@ -21,8 +21,8 @@ public class ShortenController {
 
     @PostMapping(path = "/shorten", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ShortenResponse shorten(@RequestBody ShortenRequest request) {
-        String code = linkService.shorten(request.getLongUrl(), request.getCustomAlias());
-        String shortUrl = "/" + code;
+        String code = linkService.shorten(request.getLongUrl());
+        String shortUrl = "/r/" + code;
         return new ShortenResponse(code, shortUrl);
     }
 }
