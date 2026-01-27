@@ -7,7 +7,6 @@ import com.yourname.urlshortener.repository.LinkRepository;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.regex.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class LinkService {
 
     private static final int MAX_RETRIES = 5;
-    private static final Pattern CUSTOM_ALIAS_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{3,32}$");
-
     private final LinkRepository linkRepository;
     private final CodeGenerator codeGenerator;
 
@@ -26,21 +23,8 @@ public class LinkService {
         this.codeGenerator = codeGenerator;
     }
 
-    public String shorten(String longUrl, String customAlias) {
+    public String shorten(String longUrl) {
         String normalizedUrl = validateLongUrl(longUrl);
-
-        if (customAlias != null && !customAlias.isBlank()) {
-            String trimmedAlias = customAlias.trim();
-            if (!CUSTOM_ALIAS_PATTERN.matcher(trimmedAlias).matches()) {
-                throw new BadRequestException("customAlias must match ^[A-Za-z0-9_-]{3,32}$");
-            }
-            if (linkRepository.existsByCode(trimmedAlias)) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "customAlias already exists");
-            }
-            Link link = new Link(trimmedAlias, normalizedUrl, Instant.now().toEpochMilli(), 0L);
-            linkRepository.save(link);
-            return trimmedAlias;
-        }
 
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             String code = codeGenerator.generate();
