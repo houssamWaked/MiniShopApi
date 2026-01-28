@@ -1,12 +1,12 @@
-package com.yourname.minimarket.repository;
+package com.HoussamAlwaked.minimarket.repository;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.yourname.minimarket.entity.Product;
-import com.yourname.minimarket.exception.BadRequestException;
+import com.HoussamAlwaked.minimarket.entity.Product;
+import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

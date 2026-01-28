@@ -1,4 +1,4 @@
-package com.yourname.minimarket.exception;
+package com.HoussamAlwaked.minimarket.exception;
 
 import java.util.List;
 

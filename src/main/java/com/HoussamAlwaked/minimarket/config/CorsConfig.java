@@ -1,4 +1,4 @@
-package com.yourname.minimarket.config;
+package com.HoussamAlwaked.minimarket.config;
 
 import java.util.Arrays;
 import java.util.List;

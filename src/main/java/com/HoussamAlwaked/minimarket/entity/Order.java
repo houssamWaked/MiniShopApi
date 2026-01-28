@@ -1,4 +1,4 @@
-package com.yourname.minimarket.entity;
+package com.HoussamAlwaked.minimarket.entity;
 
 import java.math.BigDecimal;
 import java.time.Instant;

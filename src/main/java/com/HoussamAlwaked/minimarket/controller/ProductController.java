@@ -1,4 +1,4 @@
-package com.yourname.minimarket.controller;
+package com.HoussamAlwaked.minimarket.controller;
 
 import com.yourname.minimarket.dto.StockDecrementRequest;
 import com.yourname.minimarket.dto.StockUpdateRequest;

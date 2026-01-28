@@ -1,8 +1,8 @@
-package com.yourname.minimarket.controller;
+package com.HoussamAlwaked.minimarket.controller;
 
-import com.yourname.minimarket.dto.OrderRequest;
-import com.yourname.minimarket.entity.Order;
-import com.yourname.minimarket.service.OrderService;
+import com.HoussamAlwaked.minimarket.dto.OrderRequest;
+import com.HoussamAlwaked.minimarket.entity.Order;
+import com.HoussamAlwaked.minimarket.service.OrderService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
