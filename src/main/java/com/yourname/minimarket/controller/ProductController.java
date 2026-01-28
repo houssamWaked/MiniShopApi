@@ -1,9 +1,12 @@
 package com.yourname.minimarket.controller;
 
+import com.yourname.minimarket.dto.StockDecrementRequest;
+import com.yourname.minimarket.dto.StockUpdateRequest;
 import com.yourname.minimarket.entity.Product;
 import com.yourname.minimarket.exception.BadRequestException;
 import com.yourname.minimarket.exception.NotFoundException;
 import com.yourname.minimarket.repository.ProductRepository;
+import com.yourname.minimarket.service.ProductService;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository) {
+    public ProductController(ProductRepository productRepository, ProductService productService) {
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @GetMapping
@@ -51,6 +56,16 @@ public class ProductController {
         existing.setStock(request.getStock());
 
         return productRepository.save(existing);
+    }
+
+    @PostMapping("/{id}/stock")
+    public Product setStock(@PathVariable String id, @RequestBody StockUpdateRequest request) {
+        return productService.setStock(id, request);
+    }
+
+    @PostMapping("/{id}/stock/decrement")
+    public Product decrementStock(@PathVariable String id, @RequestBody StockDecrementRequest request) {
+        return productService.decrementStock(id, request);
     }
 
     @DeleteMapping("/{id}")
