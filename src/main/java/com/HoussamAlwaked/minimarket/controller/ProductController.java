@@ -1,9 +1,9 @@
-package com.yourname.minimarket.controller;
+package com.HoussamAlwaked.minimarket.controller;
 
-import com.yourname.minimarket.entity.Product;
-import com.yourname.minimarket.exception.BadRequestException;
-import com.yourname.minimarket.exception.NotFoundException;
-import com.yourname.minimarket.repository.ProductRepository;
+import com.HoussamAlwaked.minimarket.entity.Product;
+import com.HoussamAlwaked.minimarket.exception.BadRequestException;
+import com.HoussamAlwaked.minimarket.exception.NotFoundException;
+import com.HoussamAlwaked.minimarket.repository.ProductRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.HttpStatus;

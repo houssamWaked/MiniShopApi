@@ -1,4 +1,4 @@
-package com.yourname.minimarket;
+package com.HoussamAlwaked.minimarket;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

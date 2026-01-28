@@ -1,4 +1,4 @@
-package com.yourname.minimarket.dto;
+package com.HoussamAlwaked.minimarket.dto;
 
 import java.util.ArrayList;
 import java.util.List;

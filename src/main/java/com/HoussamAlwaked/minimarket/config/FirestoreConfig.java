@@ -1,4 +1,4 @@
-package com.yourname.minimarket.config;
+package com.HoussamAlwaked.minimarket.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
