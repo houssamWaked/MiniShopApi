@@ -92,6 +92,20 @@ public class CategoryRepository {
         }
     }
 
+    public void deleteById(String id) {
+        if (id == null || id.isBlank()) {
+            return;
+        }
+        try {
+            collection.document(id).delete().get();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Category delete interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to delete category.", ex.getCause());
+        }
+    }
+
     public Map<String, Object> toMap(Category category) {
         Map<String, Object> data = new HashMap<>();
         data.put("id", category.getId());
