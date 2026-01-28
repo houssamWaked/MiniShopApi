@@ -5,6 +5,7 @@ import com.HoussamAlwaked.minimarket.dto.StockUpdateRequest;
 import com.HoussamAlwaked.minimarket.entity.Product;
 import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import com.HoussamAlwaked.minimarket.exception.NotFoundException;
+import com.HoussamAlwaked.minimarket.repository.CategoryRepository;
 import com.HoussamAlwaked.minimarket.repository.ProductRepository;
 import com.HoussamAlwaked.minimarket.service.ProductService;
 import java.math.BigDecimal;
@@ -26,10 +27,16 @@ public class ProductController {
 
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final CategoryRepository categoryRepository;
 
-    public ProductController(ProductRepository productRepository, ProductService productService) {
+    public ProductController(
+            ProductRepository productRepository,
+            ProductService productService,
+            CategoryRepository categoryRepository
+    ) {
         this.productRepository = productRepository;
         this.productService = productService;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -52,6 +59,8 @@ public class ProductController {
                 .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
         existing.setName(request.getName());
+        existing.setCategoryId(request.getCategoryId());
+        existing.setImage(request.getImage());
         existing.setPrice(request.getPrice());
         existing.setStock(request.getStock());
 
@@ -83,6 +92,12 @@ public class ProductController {
         }
         if (product.getName() == null || product.getName().isBlank()) {
             throw new BadRequestException("Product name is required.");
+        }
+        if (product.getCategoryId() == null || product.getCategoryId().isBlank()) {
+            throw new BadRequestException("Product category is required.");
+        }
+        if (!categoryRepository.existsById(product.getCategoryId())) {
+            throw new BadRequestException("Invalid category id: " + product.getCategoryId());
         }
         if (product.getImage() != null && product.getImage().isBlank()) {
             throw new BadRequestException("Product image must not be blank.");

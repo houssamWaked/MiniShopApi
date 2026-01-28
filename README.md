@@ -4,6 +4,7 @@ A Spring Boot backend for a mini market system using Google Firestore for persis
 
 ## Features
 - Products: create, list, update, delete
+- Categories: list predefined categories
 - Orders: create with stock validation and atomic stock decrement, list all orders
 - Stock management: set stock directly or decrement stock safely
 - Centralized JSON error responses
@@ -83,6 +84,7 @@ Body:
 ```json
 {
   "name": "Apple",
+  "categoryId": "category-id",
   "price": 1.50,
   "stock": 100,
   "image": "https://example.com/apple.png"
@@ -102,6 +104,7 @@ Body:
 ```json
 {
   "name": "Green Apple",
+  "categoryId": "category-id",
   "price": 1.75,
   "stock": 80,
   "image": "https://example.com/green-apple.png"
@@ -151,6 +154,12 @@ Body:
 GET /api/orders
 ```
 
+### Categories
+**List categories**
+```
+GET /api/categories
+```
+
 ## Order Logic
 When creating an order:
 1. Validate each product exists
@@ -180,14 +189,21 @@ Common cases:
 ## Firestore Data Model
 Collections:
 - `products`
+- `categories`
 - `orders`
 
 Product document fields:
 - `id` (string)
 - `name` (string)
+- `categoryId` (string)
 - `image` (string, optional)
 - `price` (string or number)
 - `stock` (number)
+
+Category document fields:
+- `id` (string)
+- `name` (string)
+- `slug` (string)
 
 Order document fields:
 - `id` (string)

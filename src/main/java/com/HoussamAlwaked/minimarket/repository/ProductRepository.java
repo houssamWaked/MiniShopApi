@@ -116,6 +116,7 @@ public class ProductRepository {
         Map<String, Object> data = new HashMap<>();
         data.put("id", product.getId());
         data.put("name", product.getName());
+        data.put("categoryId", product.getCategoryId());
         data.put("image", product.getImage());
         data.put("price", product.getPrice() == null ? null : product.getPrice().toPlainString());
         data.put("stock", product.getStock());
@@ -126,6 +127,7 @@ public class ProductRepository {
         Product product = new Product();
         product.setId(snapshot.getId());
         product.setName(snapshot.getString("name"));
+        product.setCategoryId(snapshot.getString("categoryId"));
         product.setImage(snapshot.getString("image"));
         product.setPrice(parseDecimal(snapshot.get("price")));
         Long stockValue = snapshot.getLong("stock");
