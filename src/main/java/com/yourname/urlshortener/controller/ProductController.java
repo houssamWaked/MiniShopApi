@@ -41,7 +41,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product request) {
+    public Product updateProduct(@PathVariable String id, @RequestBody Product request) {
         validateProduct(request);
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found: " + id));
@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         if (!productRepository.existsById(id)) {
             throw new NotFoundException("Product not found: " + id);
         }

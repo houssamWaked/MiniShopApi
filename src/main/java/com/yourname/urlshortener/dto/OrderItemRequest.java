@@ -2,17 +2,17 @@ package com.yourname.urlshortener.dto;
 
 public class OrderItemRequest {
 
-    private Long productId;
+    private String productId;
     private int quantity;
 
     public OrderItemRequest() {
     }
 
-    public Long getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 
