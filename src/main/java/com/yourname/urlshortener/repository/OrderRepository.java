@@ -118,6 +118,7 @@ public class OrderRepository {
         Map<String, Object> data = new HashMap<>();
         data.put("id", product.getId());
         data.put("name", product.getName());
+        data.put("image", product.getImage());
         data.put("price", product.getPrice() == null ? null : product.getPrice().toPlainString());
         data.put("stock", product.getStock());
         return data;
@@ -141,6 +142,7 @@ public class OrderRepository {
         Product product = new Product();
         product.setId(asString(map.get("id")));
         product.setName(asString(map.get("name")));
+        product.setImage(asString(map.get("image")));
         product.setPrice(parseDecimal(map.get("price")));
         product.setStock(parseInt(map.get("stock")));
         return product;

@@ -69,6 +69,9 @@ public class ProductController {
         if (product.getName() == null || product.getName().isBlank()) {
             throw new BadRequestException("Product name is required.");
         }
+        if (product.getImage() != null && product.getImage().isBlank()) {
+            throw new BadRequestException("Product image must not be blank.");
+        }
         if (product.getPrice() == null) {
             throw new BadRequestException("Product price is required.");
         }

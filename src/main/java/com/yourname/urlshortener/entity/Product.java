@@ -6,6 +6,7 @@ public class Product {
 
     private String id;
     private String name;
+    private String image;
     private BigDecimal price;
     private int stock;
 
@@ -26,6 +27,14 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public BigDecimal getPrice() {
