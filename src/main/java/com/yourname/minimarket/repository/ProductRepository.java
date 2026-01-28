@@ -1,12 +1,12 @@
-package com.yourname.urlshortener.repository;
+package com.yourname.minimarket.repository;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.yourname.urlshortener.entity.Product;
-import com.yourname.urlshortener.exception.BadRequestException;
+import com.yourname.minimarket.entity.Product;
+import com.yourname.minimarket.exception.BadRequestException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.yourname.urlshortener.exception;
+package com.yourname.minimarket.exception;
 
 public class BadRequestException extends RuntimeException {
 

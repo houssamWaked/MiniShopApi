@@ -1,12 +1,12 @@
-package com.yourname.urlshortener;
+package com.yourname.minimarket;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UrlShortenerApplication {
+public class MiniMarketApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UrlShortenerApplication.class, args);
+        SpringApplication.run(MiniMarketApplication.class, args);
     }
 }

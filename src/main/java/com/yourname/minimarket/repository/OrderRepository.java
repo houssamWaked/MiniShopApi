@@ -1,4 +1,4 @@
-package com.yourname.urlshortener.repository;
+package com.yourname.minimarket.repository;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.CollectionReference;
@@ -6,9 +6,9 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.yourname.urlshortener.entity.Order;
-import com.yourname.urlshortener.entity.OrderItem;
-import com.yourname.urlshortener.entity.Product;
+import com.yourname.minimarket.entity.Order;
+import com.yourname.minimarket.entity.OrderItem;
+import com.yourname.minimarket.entity.Product;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;

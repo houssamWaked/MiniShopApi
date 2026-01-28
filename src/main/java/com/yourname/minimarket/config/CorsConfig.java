@@ -1,4 +1,4 @@
-package com.yourname.urlshortener.config;
+package com.yourname.minimarket.config;
 
 import java.util.Arrays;
 import java.util.List;

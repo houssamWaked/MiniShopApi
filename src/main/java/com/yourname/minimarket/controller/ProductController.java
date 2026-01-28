@@ -1,9 +1,9 @@
-package com.yourname.urlshortener.controller;
+package com.yourname.minimarket.controller;
 
-import com.yourname.urlshortener.entity.Product;
-import com.yourname.urlshortener.exception.BadRequestException;
-import com.yourname.urlshortener.exception.NotFoundException;
-import com.yourname.urlshortener.repository.ProductRepository;
+import com.yourname.minimarket.entity.Product;
+import com.yourname.minimarket.exception.BadRequestException;
+import com.yourname.minimarket.exception.NotFoundException;
+import com.yourname.minimarket.repository.ProductRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.HttpStatus;

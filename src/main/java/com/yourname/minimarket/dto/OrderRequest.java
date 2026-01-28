@@ -1,4 +1,4 @@
-package com.yourname.urlshortener.dto;
+package com.yourname.minimarket.dto;
 
 import java.util.ArrayList;
 import java.util.List;

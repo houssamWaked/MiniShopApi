@@ -1,4 +1,4 @@
-package com.yourname.urlshortener.entity;
+package com.yourname.minimarket.entity;
 
 import java.math.BigDecimal;
 

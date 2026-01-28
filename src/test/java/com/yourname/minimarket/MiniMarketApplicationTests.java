@@ -1,10 +1,10 @@
-package com.example.url;
+package com.yourname.minimarket;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UrlApplicationTests {
+class MiniMarketApplicationTests {
 
 	@Test
 	void contextLoads() {
