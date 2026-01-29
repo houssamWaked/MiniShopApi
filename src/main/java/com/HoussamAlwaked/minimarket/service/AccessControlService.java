@@ -42,6 +42,9 @@ public class AccessControlService {
         if (user.isEmpty() && email != null) {
             user = userRepository.findByEmail(email);
         }
+        if (user.isEmpty() && email != null) {
+            user = userRepository.findByEmailIgnoreCase(email);
+        }
         if (userId == null && email == null) {
             throw new BadRequestException("X-USER-ID or X-USER-EMAIL header is required.");
         }
@@ -75,7 +78,7 @@ public class AccessControlService {
     }
 
     private User ensureSuperAdmin(String email, String userId) {
-        Optional<User> existing = userRepository.findByEmail(email);
+        Optional<User> existing = userRepository.findByEmail(email.trim().toLowerCase());
         if (existing.isPresent()) {
             User user = existing.get();
             if (user.getRole() != UserRole.SUPER_ADMIN) {
@@ -87,7 +90,7 @@ public class AccessControlService {
 
         User user = new User();
         user.setId(userId == null || userId.isBlank() ? UUID.randomUUID().toString() : userId);
-        user.setEmail(email);
+        user.setEmail(email.trim().toLowerCase());
         user.setRole(UserRole.SUPER_ADMIN);
         return userRepository.save(user);
     }

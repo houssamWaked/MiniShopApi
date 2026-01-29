@@ -81,6 +81,19 @@ public class UserRepository {
         }
     }
 
+    public Optional<User> findByEmailIgnoreCase(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+        String target = email.trim().toLowerCase();
+        for (User user : findAll()) {
+            if (user.getEmail() != null && user.getEmail().toLowerCase().equals(target)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
+    }
+
     public List<User> findAll() {
         try {
             QuerySnapshot snapshot = collection.get().get();

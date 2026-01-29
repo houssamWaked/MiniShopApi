@@ -22,11 +22,44 @@ public class UserService {
 
     public User create(UserRequest request, UserRole defaultRole) {
         validate(request);
+        String normalizedEmail = request.getEmail().trim().toLowerCase();
+        UserRole requestedRole = request.getRole();
+
+        User existing = userRepository.findByEmail(request.getEmail())
+                .orElseGet(() -> userRepository.findByEmail(normalizedEmail).orElse(null));
+        if (existing != null) {
+            existing.setName(request.getName());
+            existing.setEmail(normalizedEmail);
+
+            if (requestedRole != null && requestedRole != existing.getRole()) {
+                existing.setRole(requestedRole);
+            } else if (existing.getRole() == null && defaultRole != null) {
+                existing.setRole(defaultRole);
+            }
+
+            if (existing.getRole() == UserRole.SUB_ADMIN) {
+                String storeId = request.getAssignedStoreId();
+                if (storeId != null && !storeId.isBlank()) {
+                    if (!storeRepository.existsById(storeId)) {
+                        throw new NotFoundException("Store not found: " + storeId);
+                    }
+                    existing.setAssignedStoreId(storeId);
+                } else if (existing.getAssignedStoreId() == null
+                        || existing.getAssignedStoreId().isBlank()) {
+                    throw new BadRequestException("Assigned store id is required for sub-admin.");
+                }
+            } else {
+                existing.setAssignedStoreId(null);
+            }
+
+            return userRepository.save(existing);
+        }
+
         User user = new User();
         user.setName(request.getName());
-        user.setEmail(request.getEmail());
+        user.setEmail(normalizedEmail);
 
-        UserRole role = request.getRole() == null ? defaultRole : request.getRole();
+        UserRole role = requestedRole == null ? defaultRole : requestedRole;
         user.setRole(role == null ? UserRole.CUSTOMER : role);
 
         if (user.getRole() == UserRole.SUB_ADMIN) {
@@ -48,7 +81,7 @@ public class UserService {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found: " + id));
         existing.setName(request.getName());
-        existing.setEmail(request.getEmail());
+        existing.setEmail(request.getEmail().trim().toLowerCase());
 
         if (request.getRole() != null) {
             existing.setRole(request.getRole());
