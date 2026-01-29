@@ -79,6 +79,47 @@ public class ProductRepository {
         }
     }
 
+    public List<Product> findByStoreId(String storeId) {
+        if (storeId == null || storeId.isBlank()) {
+            return List.of();
+        }
+        try {
+            QuerySnapshot snapshot = collection.whereEqualTo("storeId", storeId).get().get();
+            List<Product> products = new ArrayList<>();
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                products.add(fromSnapshot(document));
+            }
+            return products;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Product list interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to load products.", ex.getCause());
+        }
+    }
+
+    public List<Product> findByStoreAndCategory(String storeId, String categoryId) {
+        if (storeId == null || storeId.isBlank() || categoryId == null || categoryId.isBlank()) {
+            return List.of();
+        }
+        try {
+            QuerySnapshot snapshot = collection.whereEqualTo("storeId", storeId)
+                    .whereEqualTo("categoryId", categoryId)
+                    .get()
+                    .get();
+            List<Product> products = new ArrayList<>();
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                products.add(fromSnapshot(document));
+            }
+            return products;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Product list interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to load products.", ex.getCause());
+        }
+    }
+
     public boolean existsById(String id) {
         if (id == null || id.isBlank()) {
             return false;
@@ -117,6 +158,7 @@ public class ProductRepository {
         data.put("id", product.getId());
         data.put("name", product.getName());
         data.put("categoryId", product.getCategoryId());
+        data.put("storeId", product.getStoreId());
         data.put("image", product.getImage());
         data.put("price", product.getPrice() == null ? null : product.getPrice().toPlainString());
         data.put("stock", product.getStock());
@@ -128,6 +170,7 @@ public class ProductRepository {
         product.setId(snapshot.getId());
         product.setName(snapshot.getString("name"));
         product.setCategoryId(snapshot.getString("categoryId"));
+        product.setStoreId(snapshot.getString("storeId"));
         product.setImage(snapshot.getString("image"));
         product.setPrice(parseDecimal(snapshot.get("price")));
         Long stockValue = snapshot.getLong("stock");

@@ -29,7 +29,8 @@ public class CorsConfig implements WebMvcConfigurer {
                 // Allow all typical REST methods + preflight
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 // Allow headers needed for JSON + your API key header
-                .allowedHeaders("Content-Type", "Authorization", "X-API-KEY", "Accept", "Origin")
+                .allowedHeaders("Content-Type", "Authorization", "X-API-KEY", "X-USER-ID", "X-USER-EMAIL",
+                        "Accept", "Origin")
                 // If you want the browser to be able to read certain response headers, expose them here
                 .exposedHeaders("Location")
                 // If you are NOT using cookies/sessions cross-site, keep this false

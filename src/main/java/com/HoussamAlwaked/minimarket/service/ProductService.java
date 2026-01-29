@@ -24,7 +24,7 @@ public class ProductService {
         this.firestore = firestore;
     }
 
-    public Product setStock(String productId, StockUpdateRequest request) {
+    public Product setStock(String storeId, String productId, StockUpdateRequest request) {
         if (productId == null || productId.isBlank()) {
             throw new BadRequestException("Product id is required.");
         }
@@ -44,6 +44,9 @@ public class ProductService {
                 }
 
                 Product product = productRepository.fromSnapshot(snapshot);
+                if (storeId != null && !storeId.equals(product.getStoreId())) {
+                    throw new BadRequestException("Product does not belong to store: " + storeId);
+                }
                 product.setStock(request.getStock());
                 transaction.set(productRef, productRepository.toMap(product));
                 return product;
@@ -61,7 +64,7 @@ public class ProductService {
         }
     }
 
-    public Product decrementStock(String productId, StockDecrementRequest request) {
+    public Product decrementStock(String storeId, String productId, StockDecrementRequest request) {
         if (productId == null || productId.isBlank()) {
             throw new BadRequestException("Product id is required.");
         }
@@ -81,6 +84,9 @@ public class ProductService {
                 }
 
                 Product product = productRepository.fromSnapshot(snapshot);
+                if (storeId != null && !storeId.equals(product.getStoreId())) {
+                    throw new BadRequestException("Product does not belong to store: " + storeId);
+                }
                 if (product.getStock() < request.getQuantity()) {
                     throw new BadRequestException("Insufficient stock for product id: " + productId);
                 }

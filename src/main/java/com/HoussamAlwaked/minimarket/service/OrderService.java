@@ -9,10 +9,13 @@ import com.HoussamAlwaked.minimarket.dto.OrderRequest;
 import com.HoussamAlwaked.minimarket.entity.Order;
 import com.HoussamAlwaked.minimarket.entity.OrderItem;
 import com.HoussamAlwaked.minimarket.entity.Product;
+import com.HoussamAlwaked.minimarket.entity.User;
+import com.HoussamAlwaked.minimarket.entity.UserRole;
 import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import com.HoussamAlwaked.minimarket.exception.NotFoundException;
 import com.HoussamAlwaked.minimarket.repository.OrderRepository;
 import com.HoussamAlwaked.minimarket.repository.ProductRepository;
+import com.HoussamAlwaked.minimarket.repository.StoreRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,24 +29,41 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final StoreRepository storeRepository;
     private final Firestore firestore;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, Firestore firestore) {
+    public OrderService(OrderRepository orderRepository,
+                        ProductRepository productRepository,
+                        StoreRepository storeRepository,
+                        Firestore firestore) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.storeRepository = storeRepository;
         this.firestore = firestore;
     }
 
-    public Order createOrder(OrderRequest request) {
+    public Order createOrder(String customerId, OrderRequest request) {
         if (request == null || request.getItems() == null || request.getItems().isEmpty()) {
             throw new BadRequestException("Order items are required.");
+        }
+        if (customerId == null || customerId.isBlank()) {
+            throw new BadRequestException("Customer id is required.");
+        }
+        if (request.getStoreId() == null || request.getStoreId().isBlank()) {
+            throw new BadRequestException("Store id is required.");
+        }
+        if (!storeRepository.existsById(request.getStoreId())) {
+            throw new NotFoundException("Store not found: " + request.getStoreId());
         }
 
         try {
             ApiFuture<Order> future = firestore.runTransaction(transaction -> {
                 Order order = new Order();
                 order.setId(UUID.randomUUID().toString());
+                order.setCustomerId(customerId);
+                order.setStoreId(request.getStoreId());
                 order.setCreatedAt(Instant.now());
+                order.setStatus("PENDING");
 
                 List<OrderItem> orderItems = new ArrayList<>();
                 BigDecimal total = BigDecimal.ZERO;
@@ -68,6 +88,9 @@ public class OrderService {
                     }
 
                     Product product = productRepository.fromSnapshot(snapshot);
+                    if (!request.getStoreId().equals(product.getStoreId())) {
+                        throw new BadRequestException("Product does not belong to store: " + request.getStoreId());
+                    }
                     if (product.getPrice() == null) {
                         throw new BadRequestException("Product price is missing for id: " + productId);
                     }
@@ -110,8 +133,20 @@ public class OrderService {
         }
     }
 
-    public List<Order> getOrders() {
-        return orderRepository.findAll();
+    public List<Order> getOrders(User user, String storeId) {
+        if (user == null) {
+            return List.of();
+        }
+        if (user.getRole() == UserRole.SUPER_ADMIN) {
+            if (storeId != null && !storeId.isBlank()) {
+                return orderRepository.findByStoreId(storeId);
+            }
+            return orderRepository.findAll();
+        }
+        if (user.getRole() == UserRole.SUB_ADMIN) {
+            return orderRepository.findByStoreId(user.getAssignedStoreId());
+        }
+        return orderRepository.findByCustomerId(user.getId());
     }
 
     private DocumentSnapshot getSnapshot(ApiFuture<DocumentSnapshot> future) {

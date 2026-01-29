@@ -60,6 +60,44 @@ public class OrderRepository {
         }
     }
 
+    public List<Order> findByStoreId(String storeId) {
+        if (storeId == null || storeId.isBlank()) {
+            return List.of();
+        }
+        try {
+            QuerySnapshot snapshot = collection.whereEqualTo("storeId", storeId).get().get();
+            List<Order> orders = new ArrayList<>();
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                orders.add(fromSnapshot(document));
+            }
+            return orders;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Order list interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to load orders.", ex.getCause());
+        }
+    }
+
+    public List<Order> findByCustomerId(String customerId) {
+        if (customerId == null || customerId.isBlank()) {
+            return List.of();
+        }
+        try {
+            QuerySnapshot snapshot = collection.whereEqualTo("customerId", customerId).get().get();
+            List<Order> orders = new ArrayList<>();
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                orders.add(fromSnapshot(document));
+            }
+            return orders;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Order list interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to load orders.", ex.getCause());
+        }
+    }
+
     public DocumentReference getDocument(String id) {
         return collection.document(id);
     }
@@ -67,8 +105,11 @@ public class OrderRepository {
     public Map<String, Object> toMap(Order order) {
         Map<String, Object> data = new HashMap<>();
         data.put("id", order.getId());
+        data.put("customerId", order.getCustomerId());
+        data.put("storeId", order.getStoreId());
         data.put("createdAt", order.getCreatedAt() == null ? null : order.getCreatedAt().toEpochMilli());
         data.put("total", order.getTotal() == null ? null : order.getTotal().toPlainString());
+        data.put("status", order.getStatus());
 
         List<Map<String, Object>> items = new ArrayList<>();
         if (order.getOrderItems() != null) {
@@ -83,8 +124,11 @@ public class OrderRepository {
     public Order fromSnapshot(DocumentSnapshot snapshot) {
         Order order = new Order();
         order.setId(snapshot.getId());
+        order.setCustomerId(snapshot.getString("customerId"));
+        order.setStoreId(snapshot.getString("storeId"));
         order.setCreatedAt(parseInstant(snapshot.get("createdAt")));
         order.setTotal(parseDecimal(snapshot.get("total")));
+        order.setStatus(snapshot.getString("status"));
 
         List<OrderItem> items = new ArrayList<>();
         Object itemsRaw = snapshot.get("orderItems");
@@ -118,6 +162,8 @@ public class OrderRepository {
         Map<String, Object> data = new HashMap<>();
         data.put("id", product.getId());
         data.put("name", product.getName());
+        data.put("categoryId", product.getCategoryId());
+        data.put("storeId", product.getStoreId());
         data.put("image", product.getImage());
         data.put("price", product.getPrice() == null ? null : product.getPrice().toPlainString());
         data.put("stock", product.getStock());
@@ -142,6 +188,8 @@ public class OrderRepository {
         Product product = new Product();
         product.setId(asString(map.get("id")));
         product.setName(asString(map.get("name")));
+        product.setCategoryId(asString(map.get("categoryId")));
+        product.setStoreId(asString(map.get("storeId")));
         product.setImage(asString(map.get("image")));
         product.setPrice(parseDecimal(map.get("price")));
         product.setStock(parseInt(map.get("stock")));

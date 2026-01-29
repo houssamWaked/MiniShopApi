@@ -92,6 +92,25 @@ public class CategoryRepository {
         }
     }
 
+    public List<Category> findByStoreId(String storeId) {
+        if (storeId == null || storeId.isBlank()) {
+            return List.of();
+        }
+        try {
+            QuerySnapshot snapshot = collection.whereEqualTo("storeId", storeId).get().get();
+            List<Category> categories = new ArrayList<>();
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                categories.add(fromSnapshot(document));
+            }
+            return categories;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Category list interrupted.", ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException("Failed to load categories.", ex.getCause());
+        }
+    }
+
     public void deleteById(String id) {
         if (id == null || id.isBlank()) {
             return;
@@ -111,6 +130,7 @@ public class CategoryRepository {
         data.put("id", category.getId());
         data.put("name", category.getName());
         data.put("slug", category.getSlug());
+        data.put("storeId", category.getStoreId());
         return data;
     }
 
@@ -119,6 +139,7 @@ public class CategoryRepository {
         category.setId(snapshot.getId());
         category.setName(snapshot.getString("name"));
         category.setSlug(snapshot.getString("slug"));
+        category.setStoreId(snapshot.getString("storeId"));
         return category;
     }
 }

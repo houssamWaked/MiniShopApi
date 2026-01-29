@@ -5,6 +5,7 @@ public class Category {
     private String id;
     private String name;
     private String slug;
+    private String storeId;
 
     public Category() {
     }
@@ -31,5 +32,13 @@ public class Category {
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 }
