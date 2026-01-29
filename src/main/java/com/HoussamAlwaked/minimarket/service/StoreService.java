@@ -64,6 +64,33 @@ public class StoreService {
         return storeRepository.save(store);
     }
 
+    public Store removeSubAdmin(String storeId, String userId) {
+        if (storeId == null || storeId.isBlank()) {
+            throw new BadRequestException("Store id is required.");
+        }
+        if (userId == null || userId.isBlank()) {
+            throw new BadRequestException("User id is required.");
+        }
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("Store not found: " + storeId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
+
+        if (store.getSubAdminIds() != null && store.getSubAdminIds().remove(userId)) {
+            storeRepository.save(store);
+        }
+
+        if (storeId.equals(user.getAssignedStoreId())) {
+            user.setAssignedStoreId(null);
+            if (user.getRole() == UserRole.SUB_ADMIN) {
+                user.setRole(UserRole.CUSTOMER);
+            }
+            userRepository.save(user);
+        }
+
+        return store;
+    }
+
     public List<User> getSubAdmins(String storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("Store not found: " + storeId));

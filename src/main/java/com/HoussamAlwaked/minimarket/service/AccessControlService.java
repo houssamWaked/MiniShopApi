@@ -57,9 +57,6 @@ public class AccessControlService {
 
     public User requireStoreManager(HttpServletRequest request, String storeId) {
         User user = requireUser(request);
-        if (user.getRole() == UserRole.SUPER_ADMIN) {
-            return user;
-        }
         if (user.getRole() == UserRole.SUB_ADMIN && storeId != null
                 && storeId.equals(user.getAssignedStoreId())) {
             return user;

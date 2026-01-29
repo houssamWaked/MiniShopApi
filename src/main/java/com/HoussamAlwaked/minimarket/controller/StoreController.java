@@ -87,6 +87,14 @@ public class StoreController {
         return storeService.assignSubAdmin(storeId, request.getUserId());
     }
 
+    @DeleteMapping("/{storeId}/sub-admins/{userId}")
+    public Store removeSubAdmin(@PathVariable String storeId,
+                                @PathVariable String userId,
+                                HttpServletRequest servletRequest) {
+        accessControlService.requireSuperAdmin(servletRequest);
+        return storeService.removeSubAdmin(storeId, userId);
+    }
+
     @GetMapping("/{storeId}/sub-admins")
     public List<User> getSubAdmins(@PathVariable String storeId,
                                    HttpServletRequest servletRequest) {

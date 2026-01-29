@@ -40,6 +40,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @GetMapping("/api/users/me")
+    public User getCurrentUser(HttpServletRequest servletRequest) {
+        return accessControlService.requireUser(servletRequest);
+    }
+
     @PostMapping("/api/admin/users")
     public ResponseEntity<User> createUser(@RequestBody UserRequest request,
                                            HttpServletRequest servletRequest) {

@@ -11,6 +11,7 @@ import com.HoussamAlwaked.minimarket.entity.OrderItem;
 import com.HoussamAlwaked.minimarket.entity.Product;
 import com.HoussamAlwaked.minimarket.entity.User;
 import com.HoussamAlwaked.minimarket.entity.UserRole;
+import com.HoussamAlwaked.minimarket.exception.ForbiddenException;
 import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import com.HoussamAlwaked.minimarket.exception.NotFoundException;
 import com.HoussamAlwaked.minimarket.repository.OrderRepository;
@@ -138,10 +139,7 @@ public class OrderService {
             return List.of();
         }
         if (user.getRole() == UserRole.SUPER_ADMIN) {
-            if (storeId != null && !storeId.isBlank()) {
-                return orderRepository.findByStoreId(storeId);
-            }
-            return orderRepository.findAll();
+            throw new ForbiddenException("Super admin cannot access orders.");
         }
         if (user.getRole() == UserRole.SUB_ADMIN) {
             return orderRepository.findByStoreId(user.getAssignedStoreId());
