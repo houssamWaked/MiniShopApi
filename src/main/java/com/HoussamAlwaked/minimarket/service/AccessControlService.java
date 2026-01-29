@@ -39,6 +39,29 @@ public class AccessControlService {
         if (userId != null) {
             user = userRepository.findById(userId);
         }
+        if (user.isPresent() && email != null) {
+            User byId = user.get();
+            if ((byId.getRole() == null || byId.getAssignedStoreId() == null)
+                    && byId.getEmail() != null
+                    && !byId.getEmail().equalsIgnoreCase(email)) {
+                byId.setEmail(email.trim().toLowerCase());
+            }
+            Optional<User> byEmail = userRepository.findByEmailIgnoreCase(email);
+            if (byEmail.isPresent()) {
+                User emailUser = byEmail.get();
+                boolean shouldSync = (byId.getRole() == null && emailUser.getRole() != null)
+                        || (byId.getAssignedStoreId() == null && emailUser.getAssignedStoreId() != null);
+                if (shouldSync) {
+                    if (byId.getRole() == null) {
+                        byId.setRole(emailUser.getRole());
+                    }
+                    if (byId.getAssignedStoreId() == null) {
+                        byId.setAssignedStoreId(emailUser.getAssignedStoreId());
+                    }
+                    user = Optional.of(userRepository.save(byId));
+                }
+            }
+        }
         if (user.isEmpty() && email != null) {
             user = userRepository.findByEmail(email);
         }
