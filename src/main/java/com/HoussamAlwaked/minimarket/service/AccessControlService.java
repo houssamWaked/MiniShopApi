@@ -38,9 +38,11 @@ public class AccessControlService {
         Optional<User> user = Optional.empty();
         if (userId != null) {
             user = userRepository.findById(userId);
-        } else if (email != null) {
+        }
+        if (user.isEmpty() && email != null) {
             user = userRepository.findByEmail(email);
-        } else {
+        }
+        if (userId == null && email == null) {
             throw new BadRequestException("X-USER-ID or X-USER-EMAIL header is required.");
         }
 
