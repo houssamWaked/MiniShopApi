@@ -69,10 +69,7 @@ public class StoreController {
     public ResponseEntity<Void> deleteStore(@PathVariable String storeId,
                                             HttpServletRequest servletRequest) {
         accessControlService.requireSuperAdmin(servletRequest);
-        if (!storeRepository.existsById(storeId)) {
-            throw new NotFoundException("Store not found: " + storeId);
-        }
-        storeRepository.deleteById(storeId);
+        storeService.deleteStore(storeId);
         return ResponseEntity.noContent().build();
     }
 

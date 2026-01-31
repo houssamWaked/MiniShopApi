@@ -6,6 +6,8 @@ import com.HoussamAlwaked.minimarket.entity.User;
 import com.HoussamAlwaked.minimarket.entity.UserRole;
 import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import com.HoussamAlwaked.minimarket.exception.NotFoundException;
+import com.HoussamAlwaked.minimarket.repository.CategoryRepository;
+import com.HoussamAlwaked.minimarket.repository.ProductRepository;
 import com.HoussamAlwaked.minimarket.repository.StoreRepository;
 import com.HoussamAlwaked.minimarket.repository.UserRepository;
 import java.util.ArrayList;
@@ -17,10 +19,17 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public StoreService(StoreRepository storeRepository, UserRepository userRepository) {
+    public StoreService(StoreRepository storeRepository,
+                        UserRepository userRepository,
+                        ProductRepository productRepository,
+                        CategoryRepository categoryRepository) {
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Store create(StoreRequest request) {
@@ -91,6 +100,37 @@ public class StoreService {
         }
 
         return store;
+    }
+
+    public void deleteStore(String storeId) {
+        if (storeId == null || storeId.isBlank()) {
+            throw new BadRequestException("Store id is required.");
+        }
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("Store not found: " + storeId));
+
+        // Delete all products for this store.
+        productRepository.findByStoreId(storeId)
+                .forEach(product -> productRepository.deleteById(product.getId()));
+
+        // Delete all categories for this store.
+        categoryRepository.findByStoreId(storeId)
+                .forEach(category -> categoryRepository.deleteById(category.getId()));
+
+        // Demote and unassign all sub-admins for this store.
+        for (String userId : store.getSubAdminIds()) {
+            userRepository.findById(userId).ifPresent(user -> {
+                if (storeId.equals(user.getAssignedStoreId())) {
+                    user.setAssignedStoreId(null);
+                    if (user.getRole() == UserRole.SUB_ADMIN) {
+                        user.setRole(UserRole.CUSTOMER);
+                    }
+                    userRepository.save(user);
+                }
+            });
+        }
+
+        storeRepository.deleteById(storeId);
     }
 
     public List<User> getSubAdmins(String storeId) {
