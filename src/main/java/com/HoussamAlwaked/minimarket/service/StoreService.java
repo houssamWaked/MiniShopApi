@@ -99,6 +99,19 @@ public class StoreService {
             userRepository.save(user);
         }
 
+        if (user.getEmail() != null) {
+            userRepository.findAllByEmailIgnoreCase(user.getEmail()).forEach(match -> {
+                if (!storeId.equals(match.getAssignedStoreId())) {
+                    return;
+                }
+                match.setAssignedStoreId(null);
+                if (match.getRole() == UserRole.SUB_ADMIN) {
+                    match.setRole(UserRole.CUSTOMER);
+                }
+                userRepository.save(match);
+            });
+        }
+
         return store;
     }
 
