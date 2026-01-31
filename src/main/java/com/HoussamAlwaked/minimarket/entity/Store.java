@@ -8,6 +8,7 @@ public class Store {
     private String id;
     private String name;
     private String address;
+    private String categoryId;
     private List<String> subAdminIds = new ArrayList<>();
 
     public Store() {
@@ -35,6 +36,14 @@ public class Store {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public List<String> getSubAdminIds() {

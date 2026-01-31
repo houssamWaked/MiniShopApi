@@ -4,6 +4,7 @@ public class StoreRequest {
 
     private String name;
     private String address;
+    private String categoryId;
 
     public StoreRequest() {
     }
@@ -22,5 +23,13 @@ public class StoreRequest {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }

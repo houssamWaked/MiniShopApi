@@ -28,6 +28,7 @@ public class StoreService {
         Store store = new Store();
         store.setName(request.getName());
         store.setAddress(request.getAddress());
+        store.setCategoryId(request.getCategoryId());
         return storeRepository.save(store);
     }
 
@@ -37,6 +38,7 @@ public class StoreService {
                 .orElseThrow(() -> new NotFoundException("Store not found: " + id));
         existing.setName(request.getName());
         existing.setAddress(request.getAddress());
+        existing.setCategoryId(request.getCategoryId());
         return storeRepository.save(existing);
     }
 

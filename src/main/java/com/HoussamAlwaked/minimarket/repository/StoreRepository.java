@@ -116,6 +116,7 @@ public class StoreRepository {
         data.put("id", store.getId());
         data.put("name", store.getName());
         data.put("address", store.getAddress());
+        data.put("categoryId", store.getCategoryId());
         data.put("subAdminIds", store.getSubAdminIds());
         return data;
     }
@@ -125,6 +126,7 @@ public class StoreRepository {
         store.setId(snapshot.getId());
         store.setName(snapshot.getString("name"));
         store.setAddress(snapshot.getString("address"));
+        store.setCategoryId(snapshot.getString("categoryId"));
         Object raw = snapshot.get("subAdminIds");
         if (raw instanceof List) {
             @SuppressWarnings("unchecked")
