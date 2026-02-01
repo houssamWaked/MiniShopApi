@@ -2,12 +2,14 @@ package com.HoussamAlwaked.minimarket.controller;
 
 import com.HoussamAlwaked.minimarket.dto.AssignSubAdminRequest;
 import com.HoussamAlwaked.minimarket.dto.StoreRequest;
+import com.HoussamAlwaked.minimarket.dto.StoreResponse;
 import com.HoussamAlwaked.minimarket.entity.Store;
 import com.HoussamAlwaked.minimarket.entity.User;
 import com.HoussamAlwaked.minimarket.exception.BadRequestException;
 import com.HoussamAlwaked.minimarket.exception.NotFoundException;
 import com.HoussamAlwaked.minimarket.repository.StoreRepository;
 import com.HoussamAlwaked.minimarket.service.AccessControlService;
+import com.HoussamAlwaked.minimarket.service.OfferService;
 import com.HoussamAlwaked.minimarket.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,40 +31,49 @@ public class StoreController {
     private final StoreRepository storeRepository;
     private final StoreService storeService;
     private final AccessControlService accessControlService;
+    private final OfferService offerService;
 
     public StoreController(StoreRepository storeRepository,
                            StoreService storeService,
-                           AccessControlService accessControlService) {
+                           AccessControlService accessControlService,
+                           OfferService offerService) {
         this.storeRepository = storeRepository;
         this.storeService = storeService;
         this.accessControlService = accessControlService;
+        this.offerService = offerService;
     }
 
     @GetMapping
-    public List<Store> getStores() {
-        return storeRepository.findAll();
+    public List<StoreResponse> getStores() {
+        List<Store> stores = storeRepository.findAll();
+        List<StoreResponse> responses = new java.util.ArrayList<>();
+        for (Store store : stores) {
+            responses.add(toResponse(store));
+        }
+        return responses;
     }
 
     @GetMapping("/{storeId}")
-    public Store getStore(@PathVariable String storeId) {
-        return storeRepository.findById(storeId)
+    public StoreResponse getStore(@PathVariable String storeId) {
+        Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("Store not found: " + storeId));
+        return toResponse(store);
     }
 
     @PostMapping
-    public ResponseEntity<Store> createStore(@RequestBody StoreRequest request,
-                                             HttpServletRequest servletRequest) {
+    public ResponseEntity<StoreResponse> createStore(@RequestBody StoreRequest request,
+                                                     HttpServletRequest servletRequest) {
         accessControlService.requireSuperAdmin(servletRequest);
         Store saved = storeService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @PutMapping("/{storeId}")
-    public Store updateStore(@PathVariable String storeId,
-                             @RequestBody StoreRequest request,
-                             HttpServletRequest servletRequest) {
+    public StoreResponse updateStore(@PathVariable String storeId,
+                                     @RequestBody StoreRequest request,
+                                     HttpServletRequest servletRequest) {
         accessControlService.requireSuperAdmin(servletRequest);
-        return storeService.update(storeId, request);
+        return toResponse(storeService.update(storeId, request));
     }
 
     @DeleteMapping("/{storeId}")
@@ -97,5 +108,16 @@ public class StoreController {
                                    HttpServletRequest servletRequest) {
         accessControlService.requireSuperAdmin(servletRequest);
         return storeService.getSubAdmins(storeId);
+    }
+
+    private StoreResponse toResponse(Store store) {
+        StoreResponse response = new StoreResponse();
+        response.setId(store.getId());
+        response.setName(store.getName());
+        response.setAddress(store.getAddress());
+        response.setCategoryId(store.getCategoryId());
+        response.setSubAdminIds(store.getSubAdminIds());
+        response.setHasActiveOffer(offerService.hasActiveOffer(store.getId()));
+        return response;
     }
 }

@@ -108,8 +108,13 @@ public class OrderRepository {
         data.put("customerId", order.getCustomerId());
         data.put("storeId", order.getStoreId());
         data.put("createdAt", order.getCreatedAt() == null ? null : order.getCreatedAt().toEpochMilli());
+        data.put("subtotal", order.getSubtotal() == null ? null : order.getSubtotal().toPlainString());
+        data.put("discount", order.getDiscount() == null ? null : order.getDiscount().toPlainString());
+        data.put("deliveryFee", order.getDeliveryFee() == null ? null : order.getDeliveryFee().toPlainString());
         data.put("total", order.getTotal() == null ? null : order.getTotal().toPlainString());
         data.put("status", order.getStatus());
+        data.put("appliedOfferId", order.getAppliedOfferId());
+        data.put("freeDelivery", order.isFreeDelivery());
 
         List<Map<String, Object>> items = new ArrayList<>();
         if (order.getOrderItems() != null) {
@@ -127,8 +132,13 @@ public class OrderRepository {
         order.setCustomerId(snapshot.getString("customerId"));
         order.setStoreId(snapshot.getString("storeId"));
         order.setCreatedAt(parseInstant(snapshot.get("createdAt")));
+        order.setSubtotal(parseDecimal(snapshot.get("subtotal")));
+        order.setDiscount(parseDecimal(snapshot.get("discount")));
+        order.setDeliveryFee(parseDecimal(snapshot.get("deliveryFee")));
         order.setTotal(parseDecimal(snapshot.get("total")));
         order.setStatus(snapshot.getString("status"));
+        order.setAppliedOfferId(snapshot.getString("appliedOfferId"));
+        order.setFreeDelivery(Boolean.TRUE.equals(snapshot.getBoolean("freeDelivery")));
 
         List<OrderItem> items = new ArrayList<>();
         Object itemsRaw = snapshot.get("orderItems");

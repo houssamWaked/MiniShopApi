@@ -31,15 +31,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
+    private final OfferService offerService;
     private final Firestore firestore;
 
     public OrderService(OrderRepository orderRepository,
                         ProductRepository productRepository,
                         StoreRepository storeRepository,
+                        OfferService offerService,
                         Firestore firestore) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.storeRepository = storeRepository;
+        this.offerService = offerService;
         this.firestore = firestore;
     }
 
@@ -114,7 +117,24 @@ public class OrderService {
                 }
 
                 order.setOrderItems(orderItems);
-                order.setTotal(total);
+                order.setSubtotal(total);
+
+                OfferService.OfferApplication application =
+                        offerService.applyOffers(request.getStoreId(), orderItems, total, Instant.now());
+                BigDecimal discount = application.getDiscount() == null ? BigDecimal.ZERO : application.getDiscount();
+                BigDecimal deliveryFee = request.getDeliveryFee() == null ? BigDecimal.ZERO : request.getDeliveryFee();
+                if (application.isFreeDelivery()) {
+                    deliveryFee = BigDecimal.ZERO;
+                }
+                BigDecimal finalTotal = total.subtract(discount).add(deliveryFee);
+
+                order.setDiscount(discount);
+                order.setDeliveryFee(deliveryFee);
+                order.setTotal(finalTotal);
+                if (application.getOffer() != null) {
+                    order.setAppliedOfferId(application.getOffer().getId());
+                }
+                order.setFreeDelivery(application.isFreeDelivery());
 
                 DocumentReference orderRef = orderRepository.getDocument(order.getId());
                 transaction.set(orderRef, orderRepository.toMap(order));
